@@ -56,7 +56,7 @@ The provider needs three values to connect to the Mihari API:
 ### Option 1: Environment Variables (recommended for CI/CD)
 
 ```bash
-export MIHARI_API_URL="https://app.mihari.io"
+export MIHARI_API_URL="https://platform.mihari.io"
 export MIHARI_API_TOKEN="your-token-here"
 export MIHARI_ORGANIZATION_ID="your-org-uuid"
 ```
@@ -74,7 +74,7 @@ variable "mihari_api_token" {
 }
 
 provider "mihari" {
-  api_url         = "https://app.mihari.io"
+  api_url         = "https://platform.mihari.io"
   api_token       = var.mihari_api_token
   organization_id = "your-org-uuid"
 }

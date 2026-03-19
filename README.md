@@ -33,7 +33,7 @@ terraform {
 }
 
 provider "mihari" {
-  api_url         = "https://app.mihari.io"
+  api_url         = "https://platform.mihari.io"
   api_token       = var.mihari_api_token
   organization_id = var.mihari_organization_id
 }
@@ -42,7 +42,7 @@ provider "mihari" {
 Or use environment variables:
 
 ```bash
-export MIHARI_API_URL="https://app.mihari.io"
+export MIHARI_API_URL="https://platform.mihari.io"
 export MIHARI_API_TOKEN="your-api-token"
 export MIHARI_ORGANIZATION_ID="your-org-uuid"
 ```

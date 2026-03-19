@@ -16,7 +16,7 @@ provider "mihari" {
 variable "mihari_api_url" {
   description = "Mihari API base URL"
   type        = string
-  default     = "https://app.mihari.io"
+  default     = "https://platform.mihari.io"
 }
 
 variable "mihari_api_token" {

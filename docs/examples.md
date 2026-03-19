@@ -26,7 +26,7 @@ provider "mihari" {
 
 variable "mihari_api_url" {
   type    = string
-  default = "https://app.mihari.io"
+  default = "https://platform.mihari.io"
 }
 
 variable "mihari_api_token" {
@@ -229,7 +229,7 @@ resource "mihari_on_call_calendar" "engineering" {
 # ──────────────────────────────────────────────
 
 output "status_page_url" {
-  value = "https://status-myapp.mihari.io"
+  value = "https://status-myplatform.mihari.io"
 }
 
 output "monitor_ids" {
