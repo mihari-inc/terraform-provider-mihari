@@ -9,6 +9,8 @@ import (
 	"github.com/mihari-io/terraform-provider-mihari/internal/provider"
 )
 
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name mihari
+
 var version = "dev"
 
 func main() {

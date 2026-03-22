@@ -26,7 +26,10 @@ fmt:
 tidy:
 	go mod tidy
 
+docs:
+	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name mihari
+
 clean:
 	rm -f $(BINARY_NAME)
 
-.PHONY: build install test testacc fmt tidy clean
+.PHONY: build install test testacc fmt tidy clean docs
