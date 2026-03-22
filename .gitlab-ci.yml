@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────
+# terraform-provider-mihari/ — Go tests & GitHub sync
+# ─────────────────────────────────────────────────────────
+
+.only_terraform:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes:
+        paths: [terraform-provider-mihari/**/*]
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        paths: [terraform-provider-mihari/**/*]
+    - if: $CI_PIPELINE_SOURCE == "web"
+
+# ── Unit tests (httptest mocks, zero external deps) ───
+test:terraform-unit:
+  stage: test
+  image: golang:1.23-alpine
+  script:
+    - cd terraform-provider-mihari
+    - go mod download
+    - go test ./internal/... -v -count=1 -timeout 120s
+  cache:
+    key: go-mod-$CI_COMMIT_REF_SLUG
+    paths:
+      - terraform-provider-mihari/go/pkg/mod/
+    policy: pull-push
+  extends: .only_terraform
+
+# ── Sync to GitHub (splitsh-lite) ─────────────────────
+sync-terraform-provider:
+  stage: deploy
+  image: alpine:latest
+  variables:
+    GIT_DEPTH: 0
+  only:
+    - main
+    - tags
+  before_script:
+    - apk add --no-cache git curl libc6-compat
+    - curl -L -o /tmp/splitsh-lite.tar.gz https://github.com/splitsh/lite/releases/download/v1.0.1/lite_linux_amd64.tar.gz
+    - tar -xzf /tmp/splitsh-lite.tar.gz -C /usr/local/bin/
+    - chmod +x /usr/local/bin/splitsh-lite
+  script:
+    - SHA=$(splitsh-lite --prefix=terraform-provider-mihari/)
+    - git remote add github https://${GITHUB_TOKEN}@github.com/mihari-inc/terraform-provider-mihari.git || true
+    - git push github ${SHA}:refs/heads/main --force
+    # Remove GitLab CI file from the GitHub copy
+    - git checkout ${SHA}
+    - git rm -f .gitlab-ci.yml 2>/dev/null || true
+    - |
+      if ! git diff --cached --quiet; then
+        git -c user.name="CI" -c user.email="ci@mihari.io" commit -m "chore: remove GitLab CI config from public repo"
+        git push github HEAD:refs/heads/main --force
+      fi
+    - git checkout -
+    # Push tags
+    - |
+      for tag in $(git tag -l "terraform-provider-*"); do
+        TAG_SHA=$(splitsh-lite --prefix=terraform-provider-mihari/ --origin="refs/tags/$tag")
+        CLEAN_TAG=$(echo $tag | sed 's/terraform-provider-mihari-//')
+        git push github ${TAG_SHA}:refs/tags/${CLEAN_TAG} --force
+      done
