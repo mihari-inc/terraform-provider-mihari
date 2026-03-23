@@ -15,7 +15,7 @@
 # ── Unit tests (httptest mocks, zero external deps) ───
 test:terraform-unit:
   stage: test
-  image: golang:1.23-alpine
+  image: golang:1.25-alpine
   script:
     - cd terraform-provider-mihari
     - go mod download
